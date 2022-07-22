@@ -35,6 +35,8 @@ class Globaltix {
 			define( 'GLOBALTIX_PATH', plugin_dir_path( __FILE__ ) );
 		}
 
+		register_activation_hook(__FILE__, 'setup_pages');
+
 		require GLOBALTIX_PATH . '/inc/globaltix-integrated-api.php';
     require GLOBALTIX_PATH . '/inc/globaltix-hook.php';
     require GLOBALTIX_PATH . '/inc/globaltix-function.php';

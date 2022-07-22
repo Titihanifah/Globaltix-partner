@@ -3,6 +3,8 @@
  * Intgrated data using API GlobalTix
  */
 $GLOBALS['base_url_api'] = 'https://uat-api.globaltix.com/api';
+
+/* auth and return token */
 function oauth_get_token() {
 	$url = 'https://uat-api.globaltix.com/api/auth/login';
  
@@ -22,7 +24,6 @@ function oauth_get_token() {
 
   $body_response     = wp_remote_retrieve_body( $response );
   $data = json_decode( $body_response );
-// TODO: disini dikasih kondisi kalo timeout, mungkin bisa pakai try catch
   
   if ( is_wp_error( $response ) ) {
       $error_message = $response->get_error_message();
@@ -37,9 +38,15 @@ function oauth_get_token() {
 
 function get_product_by_api( $token ) {
     $hal = isset( $_GET['hal'] ) ? (int) $_GET['hal'] : 1;
+    $countryId = isset( $_GET['countryId'] ) ? (int) $_GET['countryId'] : 1;
     $searchText = isset( $_GET['searchText'] ) ? sanitize_text_field( $_GET['searchText'] ) : '';
+   
+    $url = $GLOBALS['base_url_api'];
+    $url .= '/product/list?';
+    $url .= 'countryId='.$countryId.'&cityIds=all&categoryIds=all';
+    $url .= '&searchText='.$searchText;
+    $url .= '&page='.$hal.'&lang=en';
 
-    $url = 'https://uat-api.globaltix.com/api/product/list?countryId=1&cityIds=all&categoryIds=all&searchText='.$searchText.'&page='.$hal.'&lang=en';
     $auth = 'Bearer '.$token;
     
     $headers = array(
@@ -63,7 +70,7 @@ function get_product_by_api( $token ) {
 }
 
 function get_detail_by_id( $id, $token, $type = 'product' ) {
-  // $url = 'https://uat-api.globaltix.com/api/product/info?id='.$product_id.'&lang=en';
+  
   $url = $GLOBALS['base_url_api'];
   if( $type == 'ticket' ) {
     $url .= '/ticketType/get?id='.$id.'&fromResellerId=';

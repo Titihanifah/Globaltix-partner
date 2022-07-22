@@ -27,8 +27,6 @@ if( $result->success == true ) {
       echo '<br>======================<br>';
     }
   } else {
-echo '<pre>';
-    var_dump($detail_products);
     echo '<h5>'.$detail_products->name.'</h5><br>';
     echo '<p>'.$detail_products->description.'</p><br>';
     echo '<p>'.$detail_products->termsAndConditions.'</p>';
