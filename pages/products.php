@@ -11,19 +11,22 @@ get_header();
 
 <div style="width: 90%;">
 <?php
-  if( $products ) :
-    foreach( $products as $product ){
+  if( $products > 1 ) :
+ echo '<h3>'.count($products).' data founds.';
+    foreach( $products as $key => $product ){
       $permalink = site_url('/products/?id='.$product->id);
 
-      echo '<div style="width 33%;">';
+      echo '<div style="width 33%;">';     
       echo '<br>';
-      echo '<h4><a href="'.$permalink.'">('. $product->id . ') ' . $product->name. '</a></h4><br>';
+      echo '<h4><a href="'.$permalink.'">'.($key+1) .'- ('. $product->id . ') ' . $product->name. '</a></h4><br>';
       echo 'Price ' . $product->originalPrice. '<br>';
       echo '<image style="width:200px;height:auto;" src="https://uat-api.globaltix.com/api/image?name='. $product->image .'" />';
       echo '<br>';
       echo '</div>';
 
     }
+  else:
+    echo 'Error '.$products;
   endif;
   ?>
 </div>

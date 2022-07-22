@@ -38,6 +38,7 @@ class Globaltix {
 		require GLOBALTIX_PATH . '/inc/globaltix-integrated-api.php';
     require GLOBALTIX_PATH . '/inc/globaltix-hook.php';
     require GLOBALTIX_PATH . '/inc/globaltix-function.php';
+		
     
 		require GLOBALTIX_PATH . '/inc/helper.php';
 	}

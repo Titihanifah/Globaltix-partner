@@ -2,7 +2,7 @@
 /**
  * Intgrated data using API GlobalTix
  */
-
+$GLOBALS['base_url_api'] = 'https://uat-api.globaltix.com/api';
 function oauth_get_token() {
 	$url = 'https://uat-api.globaltix.com/api/auth/login';
  
@@ -36,7 +36,10 @@ function oauth_get_token() {
 }
 
 function get_product_by_api( $token ) {
-    $url = 'https://uat-api.globaltix.com/api/product/list?countryId=1&cityIds=all&categoryIds=all&searchText=&page=1&lang=en';
+    $hal = isset( $_GET['hal'] ) ? (int) $_GET['hal'] : 1;
+    $searchText = isset( $_GET['searchText'] ) ? sanitize_text_field( $_GET['searchText'] ) : '';
+
+    $url = 'https://uat-api.globaltix.com/api/product/list?countryId=1&cityIds=all&categoryIds=all&searchText='.$searchText.'&page='.$hal.'&lang=en';
     $auth = 'Bearer '.$token;
     
     $headers = array(
@@ -53,14 +56,23 @@ function get_product_by_api( $token ) {
     $result = json_decode( $body );
 
     if ( is_wp_error( $response ) ) {
-      $error_message = $response->get_error_message();
-     
-    }
-    if( $result ) return $result->data;
+      $error_message = $response->get_error_message();     
+    } 
+    $error_message = 'error, data not founds.';
+    if( $result && $result->data > 0 ) return  $result->data; else return $error_message;
 }
 
-function get_detail_product( $product_id, $token ) {
-  $url = 'https://uat-api.globaltix.com/api/product/info?id='.$product_id.'&lang=en';
+function get_detail_by_id( $id, $token, $type = 'product' ) {
+  // $url = 'https://uat-api.globaltix.com/api/product/info?id='.$product_id.'&lang=en';
+  $url = $GLOBALS['base_url_api'];
+  if( $type == 'ticket' ) {
+    $url .= '/ticketType/get?id='.$id.'&fromResellerId=';
+  } else {
+    $url .= '/product/options?id='.$id.'&lang=en';
+  }
+
+
+ 
 
   $auth = 'Bearer '.$token;
     
@@ -74,6 +86,8 @@ function get_detail_product( $product_id, $token ) {
       'headers' => $headers,
     )
   );
+
+
   $body = wp_remote_retrieve_body( $response );
   $result = json_decode( $body );
 
@@ -81,6 +95,6 @@ function get_detail_product( $product_id, $token ) {
     $error_message = $response->get_error_message();
     
   }
-  if( $result ) return $result->data;
+  if( $result ) return wp_json_encode($result);
 }
 
